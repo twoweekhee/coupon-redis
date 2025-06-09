@@ -30,8 +30,7 @@ dependencies {
 
     implementation("org.springframework.boot:spring-boot-starter-data-redis")
 
-    compileOnly("org.projectlombok:lombok")
-    annotationProcessor("org.projectlombok:lombok")
+    implementation("io.github.microutils:kotlin-logging:3.0.5")
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
