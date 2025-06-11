@@ -10,7 +10,6 @@ import java.util.*
 class CouponService(
     private val redisRepository: RedisRepository
 ) {
-
     fun generateCoupons(poolNumber: Int): List<Coupon> {
         val coupons = mutableListOf<Coupon>()
         val couponIds = mutableListOf<String>()

@@ -1,5 +1,6 @@
 package com.twoweekhee.coupon.repository
 
+import com.twoweekhee.coupon.common.CustomException
 import com.twoweekhee.coupon.domain.Coupon
 import org.springframework.data.redis.core.RedisTemplate
 import org.springframework.stereotype.Repository
@@ -18,5 +19,9 @@ class RedisRepository(
 
   fun saveCouponsIdList(counponIds: List<String>) {
     stringRedisTemplate.opsForList().rightPushAll(COUPON_POOL, counponIds)
+  }
+
+  fun getCoupon(): String {
+    return stringRedisTemplate.opsForList().leftPop(COUPON_POOL)?: throw CustomException("쿠폰이 더 이상 존재하지 않습니다.")
   }
 }
