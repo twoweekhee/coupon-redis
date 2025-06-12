@@ -10,6 +10,10 @@ import java.util.*
 class CouponService(
     private val redisRepository: RedisRepository
 ) {
+    fun getCoupon(id: String): Coupon {
+        return redisRepository.myCoupon()
+    }
+
     fun generateCoupons(poolNumber: Int): List<Coupon> {
         val coupons = mutableListOf<Coupon>()
         val couponIds = mutableListOf<String>()
@@ -36,11 +40,11 @@ class CouponService(
         logger.info("쿠폰 생성 완료: ${coupons.size} 개")
 
         redisRepository.saveCouponsIdList(couponIds)
+        redisRepository.saveCoupons(coupons)
         return coupons
     }
 
     fun generateCouponCode(): String {
-
         return "COUPON_${UUID.randomUUID().toString().replace("-", "").uppercase()}"
     }
 }

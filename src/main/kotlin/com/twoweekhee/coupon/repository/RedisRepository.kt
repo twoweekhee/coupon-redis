@@ -7,7 +7,8 @@ import org.springframework.stereotype.Repository
 
 @Repository
 class RedisRepository(
-  private val stringRedisTemplate: RedisTemplate<String, String>
+  private val stringRedisTemplate: RedisTemplate<String, String>,
+  private val redisTemplate: RedisTemplate<String, Any>
 ) {
   companion object {
     const val COUPON_POOL = "coupon:pool"
@@ -17,11 +18,24 @@ class RedisRepository(
     const val COUPON_COUNTER = "coupon:counter"
   }
 
-  fun saveCouponsIdList(counponIds: List<String>) {
-    stringRedisTemplate.opsForList().rightPushAll(COUPON_POOL, counponIds)
+  fun saveCouponsIdList(couponIds: List<String>) {
+    stringRedisTemplate.delete(COUPON_POOL)
+    stringRedisTemplate.opsForList().rightPushAll(COUPON_POOL, couponIds)
   }
 
-  fun getCoupon(): String {
+  fun saveCoupons(coupons: List<Coupon>) {
+    for (coupon in coupons) {
+      val key = "$COUPON_DETAILS:${coupon.id}"
+      redisTemplate.opsForValue().set(key, coupon)
+    }
+  }
+
+  fun myCoupon(): Coupon {
+    val couponId = getCoupon()
+    return redisTemplate.opsForValue().get("$COUPON_DETAILS:${couponId}") as Coupon
+  }
+
+  private fun getCoupon(): String {
     return stringRedisTemplate.opsForList().leftPop(COUPON_POOL)?: throw CustomException("쿠폰이 더 이상 존재하지 않습니다.")
   }
 }
