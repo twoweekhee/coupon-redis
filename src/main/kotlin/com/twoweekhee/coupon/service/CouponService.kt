@@ -1,6 +1,7 @@
 package com.twoweekhee.coupon.service
 
 import com.twoweekhee.coupon.domain.Coupon
+import com.twoweekhee.coupon.domain.IssuedCoupon
 import com.twoweekhee.coupon.logger
 import com.twoweekhee.coupon.repository.RedisRepository
 import org.springframework.stereotype.Service
@@ -10,8 +11,8 @@ import java.util.*
 class CouponService(
     private val redisRepository: RedisRepository
 ) {
-    fun getCoupon(id: String): Coupon {
-        return redisRepository.myCoupon()
+    fun getCoupon(id: String): IssuedCoupon {
+        return redisRepository.myCoupon(id)
     }
 
     fun generateCoupons(poolNumber: Int): List<Coupon> {
@@ -44,7 +45,11 @@ class CouponService(
         return coupons
     }
 
-    fun generateCouponCode(): String {
+    fun deleteAllCoupons() {
+        redisRepository.deleteAllCoupons()
+    }
+
+    private fun generateCouponCode(): String {
         return "COUPON_${UUID.randomUUID().toString().replace("-", "").uppercase()}"
     }
 }
