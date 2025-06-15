@@ -1,5 +1,6 @@
 package com.twoweekhee.coupon.config
 
+import com.fasterxml.jackson.annotation.JsonTypeInfo
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.SerializationFeature
@@ -63,10 +64,14 @@ class RedisConfig {
             disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
             configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
             activateDefaultTyping(
+                //어떤 타입을 역직렬화 허용할 지
                 BasicPolymorphicTypeValidator.builder()
                     .allowIfSubType(Any::class.java)
                     .build(),
-                ObjectMapper.DefaultTyping.NON_FINAL
+                //타입정보 포함하는 경우
+                ObjectMapper.DefaultTyping.NON_FINAL,
+                //타입 정보 포함 방식
+                JsonTypeInfo.As.PROPERTY
             )
         }
 

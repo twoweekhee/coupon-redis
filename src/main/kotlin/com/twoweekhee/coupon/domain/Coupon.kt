@@ -1,5 +1,8 @@
 package com.twoweekhee.coupon.domain
 
+import org.springframework.cache.annotation.Cacheable
+
+@Cacheable(cacheNames = ["coupon"])
 data class Coupon(
     val id: String,
     val code: String

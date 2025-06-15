@@ -43,11 +43,19 @@ class RedisRepository(
 
   fun deleteAllCoupons() {
     redisTemplate.delete(COUPON_POOL)
-    redisTemplate.delete(COUPON_DETAILS)
-    redisTemplate.delete(USER_COUPON_MAP)
+    deleteByPattern(COUPON_DETAILS)
+    deleteByPattern(USER_COUPON_MAP)
   }
 
   private fun getCoupon(): String {
     return stringRedisTemplate.opsForList().leftPop(COUPON_POOL)?: throw CustomException(HttpStatus.NOT_FOUND, "쿠폰이 더 이상 존재하지 않습니다.")
+  }
+
+  fun deleteByPattern(pattern: String) {
+    val keys = stringRedisTemplate.keys("$pattern*")
+    if (!keys.isNullOrEmpty()) {
+      stringRedisTemplate.delete(keys)
+      println("Deleted ${keys.size} keys with pattern: $pattern*")
+    }
   }
 }
