@@ -145,3 +145,21 @@ curl -X POST http://localhost:8080/admin/init-coupons
 - 쿠폰 소진 시 적절한 메시지 반환
 - 중복 요청에 대한 idempotent 처리
 
+## 트러블 슈팅
+
+### redis config, 코틀린 기본 생성자 없음 이슈
+
+✅ 현재 설정 (둘 다 있음)
+kotlinconfigure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+activateDefaultTyping(...)
+결과: @class 포함 저장 → 타입 정보로 정확한 객체 복원 → 알려지지 않은 필드 무시
+
+❌ FAIL_ON_UNKNOWN_PROPERTIES = false만 있는 경우
+kotlinconfigure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+// activateDefaultTyping 없음
+결과: 타입 정보 없이 저장 → LinkedHashMap으로 역직렬화 → ClassCastException
+
+❌ activateDefaultTyping만 있는 경우
+kotlin// FAIL_ON_UNKNOWN_PROPERTIES = true (기본값)
+activateDefaultTyping(...)
+결과: @class 포함 저장 → @class 필드 인식 못함 → UnrecognizedPropertyException
